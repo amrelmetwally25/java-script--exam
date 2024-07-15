@@ -2,10 +2,11 @@ let rowData = document.getElementById("rowData");
 let searchContainer = document.getElementById("searchContainer");
 let searchBox = document.getElementById("searchBox");
 let letterBox = document.getElementById("letterBox");
+let contactContiner = document.getElementById("contactContiner");
 
 function toggleSideNav() {
   var sideNav = document.querySelector(".nav-tab");
-  sideNav.classList.toggle("hidden"); // تبديل العرض بين مخفي وغير مخفي
+  sideNav.classList.toggle("hidden");
 }
 
 function showSearchInputs() {
@@ -15,7 +16,7 @@ function showSearchInputs() {
 
 function closeSideNav() {
   var sideNav = document.querySelector(".nav-tab");
-  sideNav.classList.add("hidden"); // إضافة العرض المخفي
+  sideNav.classList.add("hidden"); //
 }
 
 async function getMeals() {
@@ -23,7 +24,6 @@ async function getMeals() {
     const api = await fetch(
       "https://www.themealdb.com/api/json/v1/1/search.php?s"
     );
-    debugger;
     const response = await api.json();
     displayMeals(response.meals);
   } catch (error) {
@@ -34,9 +34,7 @@ async function getMeals() {
 getMeals();
 
 function displayMeals(data) {
-  console.log(data);
   let box = "";
-  debugger;
   for (let i = 0; i < data.length; i++) {
     box += `<div class="w-3/12 p-3">
                <div onclick="mealsDetails('${data[i].idMeal}')" class="food-imgs relative overflow-hidden rounded-lg cursor-pointer">
@@ -87,13 +85,7 @@ function displayMealsDetalis(data) {
                         }</h3>
                         <h3 class="text-white text-3xl mb-2">Recipes :</h3>
                         <ul class="list-none flex flex-wrap gap-2 mb-4">
-                                          ${data.meals[0].strIngredients
-                                            .map(
-                                              (ingredient, index) =>
-                                                `<li class="alert-info bg-blue-100 border border-blue-400 text-blue-700 p-2 rounded m-2">${ingredient}</li>`
-                                            )
-                                            .join("")}
-
+                          ${getRecipe(data)}
                         </ul>
                         <div class="space-x-3">
                             <a target="_blank"
@@ -116,10 +108,17 @@ function displayMealsDetalis(data) {
         </div>
     </section>`;
   rowData.innerHTML = box;
+}
 
-  // console.log(data.meals[0].strMealThumb);
-
-  // console.log(data.meals[0]);
+function getRecipe(data) {
+  let str = ``;
+  for (let i = 1; i < 14; i++) {
+    if (data.meals[0][`strIngredient${i}`])
+      str += `<li class="alert-info bg-blue-100 border border-blue-400 text-blue-700 p-2 rounded m-2">${
+        data.meals[0][`strIngredient${i}`]
+      }</li>`;
+  }
+  return str;
 }
 
 async function getSearch(search) {
@@ -128,7 +127,7 @@ async function getSearch(search) {
       `https://www.themealdb.com/api/json/v1/1/search.php?s=${search.value}`
     );
     let response = await api.json();
-    displaySearch(response.meals);
+    displayMeals(response.meals);
   } catch {
     console.error("Error fetching data:, error");
   }
@@ -149,8 +148,8 @@ function displaySearch(data) {
                 class="layer p-3 absolute top-full left-0 w-full h-full bg-white bg-opacity-80 transition-all duration-500 content-center">
                 <h2 class="font-mono text-2xl font-bold">${data[i].strMeal}</h2>
             </div>
-        </div>   
-                
+        </div>
+
              </div>`;
   }
   rowData.innerHTML = box;
@@ -172,6 +171,7 @@ letterBox.addEventListener("input", function () {
   getLetter(letterBox);
 });
 
+
 function displayLetter(data) {
   rowData.innerHTML = "";
   box = "";
@@ -190,35 +190,46 @@ function displayLetter(data) {
   rowData.innerHTML = box;
 }
 
+
 async function getCategories() {
   try {
     const api = await fetch(
       "https://www.themealdb.com/api/json/v1/1/categories.php"
     );
     const response = await api.json();
-    displayMeals(response.categories);
+    displayCategory(response.categories);
   } catch (error) {
     console.error("Error fetching data:, error");
   }
 }
 
-function displayMeals(data) {
+
+function displayCategory(data) {
   let box = "";
   for (let i = 0; i < data.length; i++) {
     box += `<div class="w-3/12 p-3">
-               <div class="food-imgs relative overflow-hidden rounded-lg cursor-pointer">
+               <div onclick="getCategoryMeals('${
+                 data[i].strCategory
+               }')" class="food-imgs relative overflow-hidden rounded-lg cursor-pointer">
             <img src="${data[i].strCategoryThumb}" class="w-full " alt="">
             <div
                 class="layer p-3 absolute top-full left-0 w-full h-full bg-white bg-opacity-80 transition-all duration-500 text-center">
-                <h3 class="font-mono text-2xl font-bold">${data[i].strCategory}</h3>
-                
+                <h3 class="font-mono text-2xl font-bold">${
+                  data[i].strCategory
+                }</h3>
+                <p>${data[i].strCategoryDescription
+                  .split(" ")
+                  .slice(0, 20)
+                  .join(" ")}</p>
+
             </div>
-        </div>   
-                    
+        </div>
+
              </div>`;
   }
   rowData.innerHTML = box;
 }
+
 
 async function getArea() {
   try {
@@ -232,8 +243,8 @@ async function getArea() {
   }
 }
 
+
 function displayArea(data) {
-  console.log(data);
   let box = "";
   for (let i = 0; i < data.length; i++) {
     box += `<div class="w-3/12 p-3">
@@ -245,6 +256,7 @@ function displayArea(data) {
   }
   rowData.innerHTML = box;
 }
+
 
 async function getIngredients() {
   try {
@@ -258,13 +270,13 @@ async function getIngredients() {
   }
 }
 
+
 function displayIngredients(data) {
-  console.log(data);
   let box = "";
   for (let i = 0; i < data.length; i++) {
     box += `<div class="w-3/12 p-3">
-     <div onclick="getAreaMeals('${
-       data[i].strArea
+     <div onclick="getIngredientsMeals('${
+       data[i].strIngredient
      }')" class="rounded-2 text-center cursor-pointer">
              <i class="fa-solid fa-drumstick-bite fa-4x text-white"></i>
              <h3 class="text-white font-bold text-3xl">${
@@ -278,4 +290,160 @@ function displayIngredients(data) {
  </div>`;
   }
   rowData.innerHTML = box;
+}
+
+
+async function getCategoryMeals(category) {
+  const api = await fetch(
+    `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`
+  );
+  let respone = await api.json();
+  displayMeals(respone.meals);
+}
+
+
+async function getAreaMeals(Area) {
+  const api = await fetch(
+    `https://www.themealdb.com/api/json/v1/1/filter.php?a=${Area}`
+  );
+  let response = await api.json();
+  displayMeals(response.meals);
+}
+
+
+async function getIngredientsMeals(gredients) {
+  const api = await fetch(
+    `https://www.themealdb.com/api/json/v1/1/filter.php?i=${gredients}`
+  );
+  let response = await api.json();
+  if (response.meals) displayMeals(response.meals);
+}
+
+
+function showContacts() {
+  rowData.innerHTML = "";
+  let box = `
+  
+        <div class="container mx-auto w-3/4 text-center mt-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <input id="nameInput" onkeyup="validateName()" type="text" class="form-control bg-gray-800 text-white p-2 rounded w-full" placeholder="Enter Your Name">
+                <div id="nameAlert" class="alert hidden bg-red-500 text-white p-2 mt-2 rounded">
+                    Special characters and numbers not allowed
+                </div>
+            </div>
+            <div>
+                <input id="emailInput" onkeyup="validateEmail()" type="email" class="form-control bg-gray-800 text-white p-2 rounded w-full" placeholder="Enter Your Email">
+                <div id="emailAlert" class="alert hidden bg-red-500 text-white p-2 mt-2 rounded">
+                    Email not valid *example@yyy.zzz
+                </div>
+            </div>
+            <div>
+                <input id="phoneInput" onkeyup="validatePhone()" type="text" class="form-control bg-gray-800 text-white p-2 rounded w-full" placeholder="Enter Your Phone">
+                <div id="phoneAlert" class="alert hidden bg-red-500 text-white p-2 mt-2 rounded">
+                    Enter valid Phone Number
+                </div>
+            </div>
+            <div>
+                <input id="ageInput" onkeyup="validateAge()" type="number" class="form-control bg-gray-800 text-white p-2 rounded w-full" placeholder="Enter Your Age">
+                <div id="ageAlert" class="alert hidden bg-red-500 text-white p-2 mt-2 rounded">
+                    Enter valid age
+                </div>
+            </div>
+            <div>
+                <input id="passwordInput" onkeyup="validatePassword()" type="password" class="form-control bg-gray-800 text-white p-2 rounded w-full" placeholder="Enter Your Password">
+                <div id="passwordAlert" class="alert hidden bg-red-500 text-white p-2 mt-2 rounded">
+                    Enter valid password *Minimum eight characters, at least one letter and one number:*
+                </div>
+            </div>
+            <div>
+                <input id="repasswordInput" onkeyup="validateRepassword()" type="password" class="form-control bg-gray-800 text-white p-2 rounded w-full" placeholder="Repassword">
+                <div id="repasswordAlert" class="alert hidden bg-red-500 text-white p-2 mt-2 rounded">
+                    Enter valid repassword
+                </div>
+            </div>
+        </div>
+        <button id="submitBtn" onclick="inputsValidation()" class="btn bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded mt-4">Submit</button>
+    </div>
+            `;
+  rowData.innerHTML = box;
+}
+
+
+
+
+
+function validateName() {
+  const name = document.getElementById("nameInput").value;
+  const namePattern = /^[a-zA-Z ]+$/;
+  const nameAlert = document.getElementById("nameAlert");
+  if (!namePattern.test(name)) {
+      nameAlert.classList.remove("hidden");
+  } else {
+      nameAlert.classList.add("hidden");
+  }
+}
+
+function validateEmail() {
+  const email = document.getElementById("emailInput").value;
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailAlert = document.getElementById("emailAlert");
+  if (!emailPattern.test(email)) {
+      emailAlert.classList.remove("hidden");
+  } else {
+      emailAlert.classList.add("hidden");
+  }
+}
+
+function validatePhone() {
+  const phone = document.getElementById("phoneInput").value;
+  const phonePattern = /^\d{10}$/;
+  const phoneAlert = document.getElementById("phoneAlert");
+  if (!phonePattern.test(phone)) {
+      phoneAlert.classList.remove("hidden");
+  } else {
+      phoneAlert.classList.add("hidden");
+  }
+}
+
+function validateAge() {
+  const age = document.getElementById("ageInput").value;
+  const agePattern = /^\d+$/;
+  const ageAlert = document.getElementById("ageAlert");
+  if (!agePattern.test(age) || age < 1 || age > 100) {
+      ageAlert.classList.remove("hidden");
+  } else {
+      ageAlert.classList.add("hidden");
+  }
+}
+
+function validatePassword() {
+  const password = document.getElementById("passwordInput").value;
+  const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+  const passwordAlert = document.getElementById("passwordAlert");
+  if (!passwordPattern.test(password)) {
+      passwordAlert.classList.remove("hidden");
+  } else {
+      passwordAlert.classList.add("hidden");
+  }
+}
+
+function validateRepassword() {
+  const password = document.getElementById("passwordInput").value;
+  const repassword = document.getElementById("repasswordInput").value;
+  const repasswordAlert = document.getElementById("repasswordAlert");
+  if (password !== repassword) {
+      repasswordAlert.classList.remove("hidden");
+  } else {
+      repasswordAlert.classList.add("hidden");
+  }
+}
+
+function inputsValidation() {
+  validateName();
+  validateEmail();
+  validatePhone();
+  validateAge();
+  validatePassword();
+  validateRepassword();
 }
