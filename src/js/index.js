@@ -36,7 +36,7 @@ getMeals();
 function displayMeals(data) {
   let box = "";
   for (let i = 0; i < data.length; i++) {
-    box += `<div class="w-3/12 p-3">
+    box += `<div class="w-full md:w-1/2 lg:w-3/12 p-3 ">
                <div onclick="mealsDetails('${data[i].idMeal}')" class="food-imgs relative overflow-hidden rounded-lg cursor-pointer">
             <img src="${data[i].strMealThumb}"class="w-full " alt="">
             <div
@@ -64,7 +64,7 @@ function displayMealsDetalis(data) {
         <div class="container mx-auto">
             <div>
                 <div class="flex flex-wrap space-x-4">
-                    <div class="w-4/12">
+                    <div class="w-full md:w-4/12">
                         <img src="${
                           data.meals[0].strMealThumb
                         }" class="w-full rounded-md" alt="">
@@ -207,7 +207,7 @@ async function getCategories() {
 function displayCategory(data) {
   let box = "";
   for (let i = 0; i < data.length; i++) {
-    box += `<div class="w-3/12 p-3">
+    box += `<div class="w-full md:w-1/2 lg:w-3/12 p-3">
                <div onclick="getCategoryMeals('${
                  data[i].strCategory
                }')" class="food-imgs relative overflow-hidden rounded-lg cursor-pointer">
@@ -247,7 +247,7 @@ async function getArea() {
 function displayArea(data) {
   let box = "";
   for (let i = 0; i < data.length; i++) {
-    box += `<div class="w-3/12 p-3">
+    box += `<div class="w-full md:w-1/2 lg:w-3/12 p-3">
     <div onclick="getAreaMeals('${data[i].strArea}')" class="rounded-2 text-center cursor-pointer">
             <i class="fa-solid fa-house-laptop fa-4x text-white"></i>
             <h3 class='text-white '>${data[i].strArea}</h3>b 
@@ -274,7 +274,7 @@ async function getIngredients() {
 function displayIngredients(data) {
   let box = "";
   for (let i = 0; i < data.length; i++) {
-    box += `<div class="w-3/12 p-3">
+    box += `<div class="w-full md:w-1/2 lg:w-3/12 p-3">
      <div onclick="getIngredientsMeals('${
        data[i].strIngredient
      }')" class="rounded-2 text-center cursor-pointer">
@@ -363,7 +363,7 @@ function showContacts() {
                 </div>
             </div>
         </div>
-        <button id="submitBtn" onclick="inputsValidation()" class="btn bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded mt-4">Submit</button>
+        <button  id="sbmitBtn" disabled onclick="inputsValidation()" class="btn bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded mt-4">Submit</button>
     </div>
             `;
   rowData.innerHTML = box;
@@ -381,6 +381,7 @@ function validateName() {
       nameAlert.classList.remove("hidden");
   } else {
       nameAlert.classList.add("hidden");
+      return true
   }
 }
 
@@ -392,6 +393,7 @@ function validateEmail() {
       emailAlert.classList.remove("hidden");
   } else {
       emailAlert.classList.add("hidden");
+      return true
   }
 }
 
@@ -403,6 +405,7 @@ function validatePhone() {
       phoneAlert.classList.remove("hidden");
   } else {
       phoneAlert.classList.add("hidden");
+      return true
   }
 }
 
@@ -414,6 +417,7 @@ function validateAge() {
       ageAlert.classList.remove("hidden");
   } else {
       ageAlert.classList.add("hidden");
+      return true
   }
 }
 
@@ -425,6 +429,7 @@ function validatePassword() {
       passwordAlert.classList.remove("hidden");
   } else {
       passwordAlert.classList.add("hidden");
+      return true
   }
 }
 
@@ -436,14 +441,20 @@ function validateRepassword() {
       repasswordAlert.classList.remove("hidden");
   } else {
       repasswordAlert.classList.add("hidden");
+      return true
   }
 }
 
 function inputsValidation() {
-  validateName();
-  validateEmail();
-  validatePhone();
-  validateAge();
-  validatePassword();
-  validateRepassword();
+  if(
+  validateName()&&
+  validateEmail()&&
+  validatePhone()&&
+  validateAge()&&
+  validatePassword()&&
+  validateRepassword()){
+    submitBtn.removeAttribute("disabled");
+  }else{
+    submitBtn.setAttribute("disabled", true);
+  }
 }
