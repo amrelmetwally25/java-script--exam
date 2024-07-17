@@ -363,14 +363,11 @@ function showContacts() {
                 </div>
             </div>
         </div>
-        <button  id="sbmitBtn" disabled onclick="inputsValidation()" class="btn bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded mt-4">Submit</button>
+        <button  id="sbmitBtn" onclick="inputsValidation()" class="btn bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded mt-4">Submit</button>
     </div>
             `;
   rowData.innerHTML = box;
 }
-
-
-
 
 
 function validateName() {
@@ -446,15 +443,10 @@ function validateRepassword() {
 }
 
 function inputsValidation() {
-  if(
-  validateName()&&
-  validateEmail()&&
-  validatePhone()&&
-  validateAge()&&
-  validatePassword()&&
-  validateRepassword()){
-    submitBtn.removeAttribute("disabled");
-  }else{
-    submitBtn.setAttribute("disabled", true);
-  }
+  validateName();
+  validateEmail();
+  validatePhone();
+  validateAge();
+  validatePassword();
+  validateRepassword();
 }
